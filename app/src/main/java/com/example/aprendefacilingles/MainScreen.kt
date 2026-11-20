@@ -38,6 +38,9 @@ data class Progreso(val contador: Int)
 object Conversar
 
 @Serializable
+data class DetalleConversacion(val id: Int)
+
+@Serializable
 data class Perfil(val contador: Int)
 
 
@@ -147,7 +150,20 @@ fun MainScreen() {
                 PantallaProgreso(contador = args.contador)
             }
             composable<Conversar> {
-                PantallaConversar()
+                PantallaConversar(
+                    onItemClick = { itemId ->
+                        navController.navigate(DetalleConversacion(itemId))
+                    }
+                )
+            }
+            composable<DetalleConversacion> { backStackEntry ->
+                val args = backStackEntry.toRoute<DetalleConversacion>()
+                PantallaDetalle(
+                    itemId = args.id,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }

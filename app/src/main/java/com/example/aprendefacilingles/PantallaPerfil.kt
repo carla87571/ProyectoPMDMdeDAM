@@ -3,10 +3,9 @@ package com.example.aprendefacilingles
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Schedule
@@ -57,184 +56,209 @@ fun PantallaPerfil(contador: Int) {
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Cabecera con Puntos Acumulados
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 ) {
-                    Text(text = "Perfil del Estudiante", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Puntos acumulados: $contador", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "Perfil del Estudiante", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "Puntos acumulados: $contador", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                    }
                 }
             }
 
-            Text(text = "Configura tu perfil de aprendizaje", style = MaterialTheme.typography.titleLarge)
+            item {
+                Text(text = "Configura tu perfil de aprendizaje", style = MaterialTheme.typography.titleLarge)
+            }
 
             // --- CAMPOS DE TEXTO ---
-            OutlinedTextField(
-                value = nombreUsuario,
-                onValueChange = { nombreUsuario = it },
-                label = { Text("Nombre de usuario / Alias") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = objetivoAprendizaje,
-                onValueChange = { objetivoAprendizaje = it },
-                label = { Text("Objetivo de aprendizaje (ej. Viajar, Negocios)") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = nombreUsuario,
+                        onValueChange = { nombreUsuario = it },
+                        label = { Text("Nombre de usuario / Alias") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = objetivoAprendizaje,
+                        onValueChange = { objetivoAprendizaje = it },
+                        label = { Text("Objetivo de aprendizaje (ej. Viajar, Negocios)") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
 
             // --- FECHA OBJETIVO ---
-            OutlinedTextField(
-                value = fechaFormateada,
-                onValueChange = {},
-                label = { Text("Fecha objetivo para tu meta") },
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = { mostrarModalFecha = true }) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
+            item {
+                OutlinedTextField(
+                    value = fechaFormateada,
+                    onValueChange = {},
+                    label = { Text("Fecha objetivo para tu meta") },
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        IconButton(onClick = { mostrarModalFecha = true }) {
+                            Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
+                        }
                     }
-                }
-            )
+                )
+            }
 
             // --- HORA PREFERIDA DE ESTUDIO ---
-            OutlinedTextField(
-                value = horaSeleccionada,
-                onValueChange = {},
-                label = { Text("Hora preferida de estudio") },
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = { mostrarModalHora = true }) {
-                        Icon(Icons.Default.Schedule, contentDescription = "Seleccionar hora")
+            item {
+                OutlinedTextField(
+                    value = horaSeleccionada,
+                    onValueChange = {},
+                    label = { Text("Hora preferida de estudio") },
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        IconButton(onClick = { mostrarModalHora = true }) {
+                            Icon(Icons.Default.Schedule, contentDescription = "Seleccionar hora")
+                        }
                     }
-                }
-            )
+                )
+            }
 
-            HorizontalDivider()
+            item { HorizontalDivider() }
 
             // --- NIVEL DE PARTIDA (RadioButtons) ---
-            Text(text = "Nivel de partida", style = MaterialTheme.typography.titleMedium)
-            Column(modifier = Modifier.selectableGroup()) {
-                opcionesNivel.chunked(2).forEach { filaNiveles ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        filaNiveles.forEach { nivel ->
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(text = "Nivel de partida", style = MaterialTheme.typography.titleMedium)
+                    Column(modifier = Modifier.selectableGroup()) {
+                        opcionesNivel.chunked(2).forEach { filaNiveles ->
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .selectable(
-                                        selected = (nivel == nivelSeleccionado),
-                                        onClick = { nivelSeleccionado = nivel },
-                                        role = Role.RadioButton
-                                    )
-                                    .padding(vertical = 4.dp)
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                RadioButton(
-                                    selected = (nivel == nivelSeleccionado),
-                                    onClick = null
-                                )
-                                Text(text = nivel, modifier = Modifier.padding(start = 8.dp))
+                                filaNiveles.forEach { nivel ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .selectable(
+                                                selected = (nivel == nivelSeleccionado),
+                                                onClick = { nivelSeleccionado = nivel },
+                                                role = Role.RadioButton
+                                            )
+                                            .padding(vertical = 4.dp)
+                                    ) {
+                                        RadioButton(
+                                            selected = (nivel == nivelSeleccionado),
+                                            onClick = null
+                                        )
+                                        Text(text = nivel, modifier = Modifier.padding(start = 8.dp))
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
 
-            HorizontalDivider()
+            item { HorizontalDivider() }
 
             // --- ÁREAS DE ESTUDIO A REFORZAR (Checkboxes) ---
-            Text(text = "Áreas a reforzar", style = MaterialTheme.typography.titleMedium)
-            Column {
-                opcionesAreas.forEach { area ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(role = Role.Checkbox) {
-                                areasSeleccionadas = if (areasSeleccionadas.contains(area)) {
-                                    areasSeleccionadas - area
-                                } else {
-                                    areasSeleccionadas + area
+            item {
+                Column {
+                    Text(text = "Áreas a reforzar", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    opcionesAreas.forEach { area ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable(role = Role.Checkbox) {
+                                    areasSeleccionadas = if (areasSeleccionadas.contains(area)) {
+                                        areasSeleccionadas - area
+                                    } else {
+                                        areasSeleccionadas + area
+                                    }
                                 }
-                            }
-                            .padding(vertical = 6.dp)
-                    ) {
-                        Checkbox(
-                            checked = areasSeleccionadas.contains(area),
-                            onCheckedChange = null
-                        )
-                        Text(text = area, modifier = Modifier.padding(start = 8.dp))
+                                .padding(vertical = 6.dp)
+                        ) {
+                            Checkbox(
+                                checked = areasSeleccionadas.contains(area),
+                                onCheckedChange = null
+                            )
+                            Text(text = area, modifier = Modifier.padding(start = 8.dp))
+                        }
                     }
                 }
             }
 
-            HorizontalDivider()
+            item { HorizontalDivider() }
 
-            // --- SWITCH RECORDATORIOS ---
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(role = Role.Switch) { recordatoriosActivos = !recordatoriosActivos }
-                    .padding(vertical = 8.dp)
-            ) {
-                Text(
-                    text = "Activar recordatorios de práctica",
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = recordatoriosActivos,
-                    onCheckedChange = null
-                )
-            }
+            // --- SWITCH RECORDATORIOS Y TÉRMINOS ---
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(role = Role.Switch) { recordatoriosActivos = !recordatoriosActivos }
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "Activar recordatorios de práctica",
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = recordatoriosActivos,
+                            onCheckedChange = null
+                        )
+                    }
 
-            // --- SWITCH TÉRMINOS Y CONDICIONES ---
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(role = Role.Switch) { terminosAceptados = !terminosAceptados }
-                    .padding(vertical = 8.dp)
-            ) {
-                Text(
-                    text = "Acepto los términos y condiciones",
-                    modifier = Modifier.weight(1f)
-                )
-                Switch(
-                    checked = terminosAceptados,
-                    onCheckedChange = null
-                )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(role = Role.Switch) { terminosAceptados = !terminosAceptados }
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "Acepto los términos y condiciones",
+                            modifier = Modifier.weight(1f)
+                        )
+                        Switch(
+                            checked = terminosAceptados,
+                            onCheckedChange = null
+                        )
+                    }
+                }
             }
 
             // --- BOTÓN GUARDAR PERFIL ---
-            Button(
-                onClick = {
-                    Toast.makeText(context, "¡Perfil guardado con éxito!", Toast.LENGTH_SHORT).show()
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = terminosAceptados
-            ) {
-                Text("Guardar Perfil")
+            item {
+                Button(
+                    onClick = {
+                        Toast.makeText(context, "¡Perfil guardado con éxito!", Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = terminosAceptados
+                ) {
+                    Text("Guardar Perfil")
+                }
             }
 
-            // Espacio extra al final para permitir hacer scroll completo
-            Spacer(modifier = Modifier.height(100.dp))
+            // Espacio final para que el scroll no quede tapado por la barra inferior
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
+            }
         }
     }
 
